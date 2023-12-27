@@ -20,3 +20,7 @@ This script is based off of Smallos [xnTrafficLights](https://github.com/smallo9
 ensure wp-placeables
 ensure menuv
 ensure wp-trafficlights
+
+## Dependencies
+- wp-placeables
+- menuv
