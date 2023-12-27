@@ -9,9 +9,6 @@ TrafficLightsConfig = {}
 TrafficLightsConfig.Framework = 'qb' -- 'qb', 'esx'
 TrafficLightsConfig.Notify = 'qb'    -- 'qb', 'esx', 'ox'
 
- -- Seconds between flashes when set to flashing mode
-TrafficLightsConfig.FlashInterval = 1.0
-
 TrafficLightsConfig.ConfirmButton = 38 -- E
 TrafficLightsConfig.CancelButton = 177 -- Right click / backspace
 TrafficLightsConfig.StopPointSmaller = 241 -- Scroll wheel up
@@ -22,6 +19,9 @@ TrafficLightsConfig.CancelButtonText = "Cancel"
 TrafficLightsConfig.StopPointRadiusText = "+/- Radius"
 
 TrafficLightsConfig.DefaultStopPointRadius = 4.5
+
+ -- Seconds between flashes when set to flashing mode
+ TrafficLightsConfig.FlashInterval = 1.0
 
 -- The speed vehicles can travel at when the yellow lights are flashing
 TrafficLightsConfig.FlashingYellowSpeedLimit = 5.0 -- in m/s (5m/s = ~11MPH)

@@ -25,9 +25,10 @@ local function RotationToDirection(rotation)
 end
 
 -- Uses a RayCast to get the entity, coords, and whether we "hit" something with the raycast
--- Object passed in, is the current object that we want the raycast to ignore
-local function RayCastGamePlayCamera(distance, object)
-    local entityToIgnore = object or 0
+---@param distance number The distance to raycast
+---@param entity number optional The entity for the raycast to ignore
+local function RayCastGamePlayCamera(distance, entity)
+    local entityToIgnore = entity or 0
     local cameraRotation = GetGameplayCamRot()
 	local cameraCoord = GetGameplayCamCoord()
 	local direction = RotationToDirection(cameraRotation)
@@ -125,17 +126,13 @@ local function setTrafficLightMode(selectedLightSetting)
 end
 
 -- Flash yellow lights on and off for this specific light
--- NOTE: There is a known bug with how this flashing light logic is setup
--- If a player sets his light to flashing it will only make that light flash,
--- but once he changes to a different setting, other traffic lights will have theirs turned off
--- and the player has to retoggle it. 
 ---@param entityNetId number The entityId of the traffic light
 local function setYellowFlashingLights(entityNetId)
     CreateThread(function()
         local trafficLightEntity = NetToObj(entityNetId)
+        local flashTime = Config.FlashInterval * 1000
 
         while trafficLights[entityNetId].lightSetting == Config.LightSetting.YellowFlashing do
-            local flashTime = Config.FlashInterval * 1000
             SetEntityTrafficlightOverride(trafficLightEntity, Config.LightSetting.Yellow)
             Wait(flashTime)
 
@@ -317,7 +314,7 @@ AddEventHandler('wp-trafficlights:client:UpdateTrafficLightSetting', function(en
 		SetEntityTrafficlightOverride(trafficLightEntity, lightSetting)
     -- Light == Flashing Yellow, creates a road node speed zone with a slow speed, allowing cars to move slowly through
 	elseif lightSetting == Config.LightSetting.YellowFlashing then
-        -- Lower the speed limit in this zone while lights are flashing
+        -- Lower the speed limit in this zone
         trafficLights[entityNetId].roadNodeSpeedZone = AddRoadNodeSpeedZone(speedZoneCoords, radius, Config.FlashingYellowSpeedLimit, false)
 
         setYellowFlashingLights(entityNetId)
