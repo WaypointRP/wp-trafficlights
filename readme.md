@@ -10,4 +10,13 @@ While the script doesnt limit you to putting one traffic light down, its recomme
 
 
 ## Credit
-This script is based off of Smallos [xnTrafficLights](https://github.com/smallo92/xnTrafficLights) and heavily modified to run more performantly and work with our custom [wp-placeables](https://github.com/WaypointRP/wp-placeables) script.
+This script is based off of Smallos [xnTrafficLights](https://github.com/smallo92/xnTrafficLights). It is heavily modified to run more performantly (removed several `while true` loops), remove dependency on jaymenu and work better with our custom [wp-placeables](https://github.com/WaypointRP/wp-placeables) script to handle the placement of the props.
+
+
+ FOr items.lua
+["trafficlight"] 			= {["name"] = "trafficlight", 			["label"] = "Traffic Light", 			        ["weight"] = 1000, 		    ["type"] = "item", 		["image"] = "trafficlight.png", 		["unique"] = false, 	["useable"] = true, 	["shouldClose"] = true,    ["combinable"] = nil,   ["description"] = "A deployable traffic control device"},
+
+
+ensure wp-placeables
+ensure menuv
+ensure wp-trafficlights

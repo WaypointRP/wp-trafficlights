@@ -2,7 +2,7 @@
 -- Maybe it has a custom option which is to open the traffic light menu (police / admin locked)
 -- then it opens menu
 -- menu has the diff options
-local QBCore = exports['qb-core']:GetCoreObject()
+local Config = TrafficLightsConfig
 
 local trafficLightObject = nil
 local isStoppingPointSet = false
@@ -101,7 +101,7 @@ local function setStoppingPoint()
                     isInPlacementMode = false
 
                     -- Set this traffic light to green on setting/updating the stopping point
-                    TriggerServerEvent('xnTrafficLights:UpdateTrafficLight', ObjToNet(trafficLightObject), GreenLightSetting, speedZoneStoppingPointCoords, stopPointRadius)
+                    TriggerServerEvent('wp-trafficlights:UpdateTrafficLight', ObjToNet(trafficLightObject), GreenLightSetting, speedZoneStoppingPointCoords, stopPointRadius)
                 end
 
                 -- Scroll wheel up to increase radius
@@ -123,7 +123,7 @@ local function setStoppingPoint()
             end
         end)
     else
-        QBCore.Functions.Notify('You need to place a traffic light first', 'error', 5000)
+        Notify('You need to place a traffic light first', 'error', 5000)
     end
 
 end
@@ -133,17 +133,17 @@ local function setTrafficLightMode(data)
     local lightMode = data.Value
 
     if not trafficLightObject then
-        QBCore.Functions.Notify('Lost connection to traffic light', 'error', 5000)
+        Notify('Lost connection to traffic light', 'error', 5000)
     elseif not speedZoneStoppingPointCoords then
-        QBCore.Functions.Notify('You need to set the stopping point first', 'error', 5000)
+        Notify('You need to set the stopping point first', 'error', 5000)
     else
         if lightMode == RedLightSetting then
             -- Show 2 seconds of yellow then switch to red
-            TriggerServerEvent('xnTrafficLights:UpdateTrafficLight', ObjToNet(trafficLightObject), YellowLightSetting, speedZoneStoppingPointCoords, stopPointRadius)
+            TriggerServerEvent('wp-trafficlights:UpdateTrafficLight', ObjToNet(trafficLightObject), YellowLightSetting, speedZoneStoppingPointCoords, stopPointRadius)
             Wait(2000)
-            TriggerServerEvent('xnTrafficLights:UpdateTrafficLight', ObjToNet(trafficLightObject), RedLightSetting, speedZoneStoppingPointCoords, stopPointRadius)
+            TriggerServerEvent('wp-trafficlights:UpdateTrafficLight', ObjToNet(trafficLightObject), RedLightSetting, speedZoneStoppingPointCoords, stopPointRadius)
         else
-            TriggerServerEvent('xnTrafficLights:UpdateTrafficLight', ObjToNet(trafficLightObject), lightMode, speedZoneStoppingPointCoords, stopPointRadius)
+            TriggerServerEvent('wp-trafficlights:UpdateTrafficLight', ObjToNet(trafficLightObject), lightMode, speedZoneStoppingPointCoords, stopPointRadius)
         end
     end
 end
@@ -168,7 +168,7 @@ end
 -- Delete the prop and clean up the variables
 local function removeTrafficLight(data)
     -- Call GreenLightSetting to get traffic moving again
-    TriggerServerEvent('xnTrafficLights:UpdateTrafficLight', ObjToNet(trafficLightObject), GreenLightSetting, speedZoneStoppingPointCoords, stopPointRadius)
+    TriggerServerEvent('wp-trafficlights:UpdateTrafficLight', ObjToNet(trafficLightObject), GreenLightSetting, speedZoneStoppingPointCoords, stopPointRadius)
     flashingYellowLights = false
     speedZoneStoppingPointCoords = nil
     isStoppingPointSet = false
@@ -231,7 +231,7 @@ menu:AddButton({
 ---------------------------
 
 -- Opens menu from using qbtarget or if you've already used it you can use the command to open this menu
-RegisterNetEvent('xnTrafficLights:client:OpenMenu', function(data)
+RegisterNetEvent('wp-trafficlights:client:OpenMenu', function(data)
     -- Opening via command make sure already has a traffic light object
     local openingViaCommand = not data and trafficLightObject
     -- Opening via target, make sure we have data.entity
@@ -243,13 +243,13 @@ RegisterNetEvent('xnTrafficLights:client:OpenMenu', function(data)
 
         MenuV:OpenMenu(menu)
     else 
-        QBCore.Functions.Notify('You need to connect to a traffic light first', 'error', 5000)
+        Notify('You need to connect to a traffic light first', 'error', 5000)
     end
 end)
 
 -- Updates the given traffic light to a different light setting
-RegisterNetEvent('xnTrafficLights:client:UpdateTrafficLightSetting')
-AddEventHandler('xnTrafficLights:client:UpdateTrafficLightSetting', function(object, lightSetting, speedZoneCoords, playerName, radius)
+RegisterNetEvent('wp-trafficlights:client:UpdateTrafficLightSetting')
+AddEventHandler('wp-trafficlights:client:UpdateTrafficLightSetting', function(object, lightSetting, speedZoneCoords, playerName, radius)
 	if lightSetting == GreenLightSetting then
 		flashingYellowLights = false
 		RemoveSpeedZone(playerTrafficLights[playerName]) -- Allow cars to move again
@@ -294,6 +294,6 @@ AddEventHandler('xnTrafficLights:client:UpdateTrafficLightSetting', function(obj
 	end
 end)
 
-RegisterNetEvent('xnTrafficLights:RemoveTrafficLight', function(data)
+RegisterNetEvent('wp-trafficlights:RemoveTrafficLight', function(data)
     removeTrafficLight(data)
 end)
