@@ -13,6 +13,7 @@ end
 -- Accepts an array of button objects containing the button id and text to display next to it
 -- Ex: { { id = 38, text = "Confirm" }, { id = 177, text = "Cancel" } }
 -- Note: The buttons are rendered from right to left, so structure the array accordingly (first item will be on the right)
+-- Multiple button ids can be passed in an id if they are separted by a period. Ex: { id = "38.154", text = "Confirm" }. This will render [E][X] Confirm
 function DrawInstructionalButtons(buttons)
     local scaleform = RequestScaleformMovie("instructional_buttons")
     while not HasScaleformMovieLoaded(scaleform) do

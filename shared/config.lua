@@ -20,3 +20,20 @@ TrafficLightsConfig.StopPointBigger = 242 -- Scroll wheel down
 TrafficLightsConfig.ConfirmButtonText = "Confirm"
 TrafficLightsConfig.CancelButtonText = "Cancel"
 TrafficLightsConfig.StopPointRadiusText = "+/- Radius"
+
+TrafficLightsConfig.DefaultStopPointRadius = 4.5
+
+-- The speed vehicles can travel at when the yellow lights are flashing
+TrafficLightsConfig.FlashingYellowSpeedLimit = 5.0 -- in m/s (5m/s = ~11MPH)
+
+-- Represents the different traffic light modes
+-- 0-2 are used by the natives for green, red, yellow
+TrafficLightsConfig.LightSetting = {
+    Off = -1,
+    Green = 0,
+    Red = 1,
+    Yellow = 2,
+    -- Custom (non-native) settings below
+    YellowFlashing = 3,
+    RaceLight = 4,
+}
