@@ -53,31 +53,6 @@ local function RayCastGamePlayCamera(distance, object)
 	return hit, coords, entity
 end
 
--- Draws a line and marker at the end of the raycast where the player is looking
--- local function DrawRayCastLine(coords)
---     local color = {r = 37, g = 192, b = 192, a = 200}
---     local position = GetEntityCoords(PlayerPedId())
-
---     if coords.x ~= 0.0 and coords.y ~= 0.0 then
---         DrawLine(position.x, position.y, position.z, coords.x, coords.y, coords.z, color.r, color.g, color.b, color.a)
---         DrawMarker(2, coords.x, coords.y, coords.z +0.1, 0.0, 0.0, 0.0, 0.0, 180.0, 0.0, 0.2, 0.2, 0.2, color.r, color.g, color.b, color.a, false, true, 2, nil, nil, false)
---     end
--- end
-
--- Used to Draw the text on the screen
-local function Draw2DText(content, font, colour, scale, x, y)
-    SetTextFont(font)
-    SetTextScale(scale, scale)
-    SetTextColour(colour[1],colour[2],colour[3], 255)
-    SetTextEntry("STRING")
-    SetTextDropShadow(0, 0, 0, 0,255)
-    SetTextDropShadow()
-    SetTextEdge(4, 0, 0, 0, 255)
-    SetTextOutline()
-    AddTextComponentString(content)
-    DrawText(x, y)
-end
-
 local function setStoppingPoint()
     local color = {r = 255, g = 0, b = 0, a = 255}
 
@@ -89,7 +64,11 @@ local function setStoppingPoint()
                 local hit, coords, entity = RayCastGamePlayCamera(25.0)
                 DrawMarker(25, coords.x, coords.y, coords.z+0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, stopPointRadius, stopPointRadius, 1.0, color.r, color.g, color.b, color.a, false, false, 2, nil, nil, false)
 
-                Draw2DText('[E] Confirm\n[Scroll Wheel] +/- Radius\n[Right Click / Backspace] Cancel', 4, {255, 255, 255}, 0.4, 0.85, 0.85)
+                DrawInstructionalButtons({
+                    {id = Config.CancelButton, text = Config.CancelButtonText},
+                    {id = Config.ConfirmButton, text = Config.ConfirmButtonText},
+                    {id = Config.StopPointSmaller .. "." .. Config.StopPointBigger, text = Config.StopPointRadiusText},
+                })
 
                 -- Listen for keypresses
 

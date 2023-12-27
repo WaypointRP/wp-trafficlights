@@ -13,6 +13,7 @@ shared_script {
 
 client_scripts {
     '@menuv/menuv.lua',
+    'utils/*.lua',
     'client/*.lua',
 }
 
