@@ -1,14 +1,11 @@
--- TODO: Create a useable item that can be placed using placeables logic
--- Maybe it has a custom option which is to open the traffic light menu (police / admin locked)
--- then it opens menu
--- menu has the diff options
 local Config = TrafficLightsConfig
-
 
 -- Used to store the data for each placed traffic light
 local trafficLights = {}
 -- Represents the traffic light object entity that is currently/last interacted with
 local trafficLightObject = nil
+-- If true, user will see the stopping point for the traffic light at all times (can be toggled on/off)
+local isShowingMarkers = false
 
 -- Gets the direction the camera is looking to use for the raycast functions
 local function RotationToDirection(rotation)
@@ -166,6 +163,39 @@ local function removeTrafficLight(data)
     TriggerEvent('wp-placeables:client:pickUpItem', data)
 end
 
+-- Toggles the stopping point and traffic light markers for the currently selected traffic light
+local function toggleViewMarkers()
+    local color = {r = 255, g = 0, b = 0, a = 255}
+    
+    if not trafficLightObject then
+        Notify('Not connected to a traffic light', 'error', 5000)
+        return
+    end
+    
+    local trafficLightNetId = ObjToNet(trafficLightObject)
+    if not trafficLights[trafficLightNetId] then
+        Notify('Stopping point not set for traffic light', 'error', 5000)
+        return
+    end
+    
+    isShowingMarkers = not isShowingMarkers
+
+    local speedZoneCoords = trafficLights[trafficLightNetId].speedZoneCoords
+    local radius = trafficLights[trafficLightNetId].radius
+    local trafficLightCoords = GetEntityCoords(trafficLightObject)
+    
+    if isShowingMarkers then
+        CreateThread(function()
+            while isShowingMarkers and DoesEntityExist(trafficLightObject) do
+                DrawMarker(25, speedZoneCoords.x, speedZoneCoords.y, speedZoneCoords.z + 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, radius, radius, 1.0, color.r, color.g, color.b, color.a, false, false, 2, nil, nil, false)
+                DrawMarker(25, trafficLightCoords.x, trafficLightCoords.y, trafficLightCoords.z + 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 1.0, color.r, color.g, color.b, color.a, false, false, 2, nil, nil, false)
+            
+                Wait(1)
+            end
+        end)
+    end
+end
+
 ---------------------------
 -- Menu
 ---------------------------
@@ -220,6 +250,13 @@ menu:AddButton({
     select = function(data) 
         setTrafficLightMode(data.Value)
     end
+})
+
+menu:AddButton({
+    icon = '⚙️',
+    label = "Toggle markers",
+    description = "View stopping point for current traffic light",
+    select = toggleViewMarkers
 })
 
 ---------------------------
