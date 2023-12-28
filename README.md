@@ -13,6 +13,7 @@ Players can get creative and use the traffic lights in a number of ways. Some ex
 - Using the "Race Start" mode for the countdown for drag races
 
 > Multiple traffic lights can be placed and operated at the same time. Updates to the traffic lights are synced between all players.
+
 > This script is based off of Smallos [xnTrafficLights](https://github.com/smallo92/xnTrafficLights).
 
 TODO PREVIEW
