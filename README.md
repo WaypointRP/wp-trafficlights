@@ -63,10 +63,9 @@ Using the traffic lights is quite simple.
 
 The script is designed to be as performant as possible.
 Resource monitor results:
-- While not in use: 0.0ms
-- While in use w/ Red, Green, Race Start light setting: 
-- While in use w/ Yellow Flashing light setting:
-- While placing stopping point (running a raycast): 
+- While not in use: 0.00ms
+- While in use w/ any mode: 0.00ms
+- While placing stopping point (running a raycast): 0.12ms
 
 ## Dependencies
 
