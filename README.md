@@ -16,7 +16,7 @@ Players can get creative and use the traffic lights in a number of ways. Some ex
 
 > This script is based off of Smallos [xnTrafficLights](https://github.com/smallo92/xnTrafficLights).
 
-TODO PREVIEW
+[Preview](https://www.youtube.com/watch?v=G4soDokEjZ8)
 
 ## Usage
 
