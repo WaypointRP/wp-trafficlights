@@ -1,6 +1,6 @@
 # Waypoint Traffic Lights
 
-TODO PICTURE
+![wp-trafficlights](https://github.com/WaypointRP/wp-trafficlights/assets/18689469/08129102-4bdb-43aa-b748-2724e1805374)
 
 Simple deployable traffic lights that can be interacted with to control the flow of AI traffic.
 This is an addon for [Waypoint Placeables](https://github.com/WaypointRP/wp-placeables), using it's logic for placing and picking up the objects. 
