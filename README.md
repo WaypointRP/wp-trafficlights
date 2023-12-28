@@ -83,3 +83,5 @@ Many modifications have been made to the original script to improve usability an
 - remove dependency on jaymenu
 - add additional traffic light modes (flashing yellow, race start)
 - allow placement and control of multiple traffic lights at the same time
+
+@DonHulieo for providing insipiration and examples for structuring the framework.lua file.
