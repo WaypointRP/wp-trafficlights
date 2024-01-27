@@ -30,7 +30,9 @@ Using the traffic lights is quite simple.
     - Change the radius of the stopping point using the mouse wheel up/down (configurable)
 - Select the traffic light mode: Red, Green, Yellow Flashing, or Race Start
 
-> Note: If using flashing yellow, it is recommended to have a large radius for your stopping point. Traffic will move slowly while inside the zone. 
+> Note: If using flashing yellow, it is recommended to have a large radius for your stopping point. Traffic will move slowly while inside the zone.
+
+> Note: If you are using `ox` for any of the Framework options you need to uncomment `@ox_lib/init.lua` in the fxmanifest.lua.
 
 ## Setup
 
