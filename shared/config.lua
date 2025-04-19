@@ -1,18 +1,27 @@
 -- This is intentionally not named Config, else the menuv dependency Config variable ends up overwriting this Config variable
 TrafficLightsConfig = {}
 
--- Frameworks
--- Supported framework options are listed next to each option
--- If the framework you are using is not listed, you will need to modify the framework.lua code to work with your framework
+------------------------------------
+-- FRAMEWORK / SCRIPT CONFIGURATION
+-- Adjust these settings to match the framework and scripts you are using
 -- Note: If using ox for any option, enable @ox_lib/init.lua in the manifest!
+------------------------------------
 
-TrafficLightsConfig.Framework = 'qb' -- 'qb', 'esx'
-TrafficLightsConfig.Notify = 'qb'    -- 'qb', 'esx', 'ox'
+--- @type "qb" | "qbx" | "esx"
+TrafficLightsConfig.Framework = "qb"
 
-TrafficLightsConfig.ConfirmButton = 38 -- E
-TrafficLightsConfig.CancelButton = 177 -- Right click / backspace
+-- The notification script you are using.
+--- @type "qb" | "esx" | "ox" | "none"
+TrafficLightsConfig.Notify = "qb"
+
+------------------------------------
+--- END FRAMEWORK / SCRIPT CONFIGURATION
+------------------------------------
+
+TrafficLightsConfig.ConfirmButton = 38     -- E
+TrafficLightsConfig.CancelButton = 177     -- Right click / backspace
 TrafficLightsConfig.StopPointSmaller = 241 -- Scroll wheel up
-TrafficLightsConfig.StopPointBigger = 242 -- Scroll wheel down
+TrafficLightsConfig.StopPointBigger = 242  -- Scroll wheel down
 
 TrafficLightsConfig.ConfirmButtonText = "Confirm"
 TrafficLightsConfig.CancelButtonText = "Cancel"
@@ -20,8 +29,8 @@ TrafficLightsConfig.StopPointRadiusText = "+/- Radius"
 
 TrafficLightsConfig.DefaultStopPointRadius = 4.5
 
- -- Seconds between flashes when set to flashing mode
- TrafficLightsConfig.FlashInterval = 1.0
+-- Seconds between flashes when set to flashing mode
+TrafficLightsConfig.FlashInterval = 1.0
 
 -- The speed vehicles can travel at when the yellow lights are flashing
 TrafficLightsConfig.FlashingYellowSpeedLimit = 5.0 -- in m/s (5m/s = ~11MPH)

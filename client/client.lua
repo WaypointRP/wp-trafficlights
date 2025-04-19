@@ -9,45 +9,45 @@ local isShowingMarkers = false
 
 -- Gets the direction the camera is looking to use for the raycast functions
 local function RotationToDirection(rotation)
-	local adjustedRotation =
-	{
-		x = (math.pi / 180) * rotation.x,
-		y = (math.pi / 180) * rotation.y,
-		z = (math.pi / 180) * rotation.z
-	}
-	local direction =
-	{
-		x = -math.sin(adjustedRotation.z) * math.abs(math.cos(adjustedRotation.x)),
-		y = math.cos(adjustedRotation.z) * math.abs(math.cos(adjustedRotation.x)),
-		z = math.sin(adjustedRotation.x)
-	}
-	return direction
+    local adjustedRotation =
+    {
+        x = (math.pi / 180) * rotation.x,
+        y = (math.pi / 180) * rotation.y,
+        z = (math.pi / 180) * rotation.z,
+    }
+    local direction =
+    {
+        x = -math.sin(adjustedRotation.z) * math.abs(math.cos(adjustedRotation.x)),
+        y = math.cos(adjustedRotation.z) * math.abs(math.cos(adjustedRotation.x)),
+        z = math.sin(adjustedRotation.x),
+    }
+    return direction
 end
 
 -- Uses a RayCast to get the entity, coords, and whether we "hit" something with the raycast
----@param distance number The distance to raycast
----@param entity number optional The entity for the raycast to ignore
+--- @param distance number The distance to raycast
+--- @param entity number optional The entity for the raycast to ignore
 local function RayCastGamePlayCamera(distance, entity)
     local entityToIgnore = entity or 0
     local cameraRotation = GetGameplayCamRot()
-	local cameraCoord = GetGameplayCamCoord()
-	local direction = RotationToDirection(cameraRotation)
-	local destination =
-	{
-		x = cameraCoord.x + direction.x * distance,
-		y = cameraCoord.y + direction.y * distance,
-		z = cameraCoord.z + direction.z * distance
-	}
+    local cameraCoord = GetGameplayCamCoord()
+    local direction = RotationToDirection(cameraRotation)
+    local destination =
+    {
+        x = cameraCoord.x + direction.x * distance,
+        y = cameraCoord.y + direction.y * distance,
+        z = cameraCoord.z + direction.z * distance,
+    }
 
     local traceFlag = 1 -- 1 means the raycast will only intersect with the world (ignoring other entities like peds, cars, etc)
-	local a, hit, coords, d, entity = GetShapeTestResult(StartShapeTestRay(cameraCoord.x, cameraCoord.y, cameraCoord.z, destination.x, destination.y, destination.z, traceFlag, entityToIgnore, 0))
-	return hit, coords, entity
+    local a, hit, coords, d, entity = GetShapeTestResult(StartShapeTestRay(cameraCoord.x, cameraCoord.y, cameraCoord.z, destination.x, destination.y, destination.z, traceFlag, entityToIgnore, 0))
+    return hit, coords, entity
 end
 
 -- Starts a raycast thread for placing the stopping point where you want the cars to stop
 -- Listens for key presses to change the radius of the stopping point, confirmation or cancel
 local function setStoppingPoint()
-    local color = {r = 255, g = 0, b = 0, a = 255}
+    local color = { r = 255, g = 0, b = 0, a = 255, }
     local stopPointRadius = Config.DefaultStopPointRadius
 
     -- Check that the trafficLightObject exists first
@@ -59,9 +59,9 @@ local function setStoppingPoint()
                 DrawMarker(25, coords.x, coords.y, coords.z + 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, stopPointRadius, stopPointRadius, 1.0, color.r, color.g, color.b, color.a, false, false, 2, nil, nil, false)
 
                 DrawInstructionalButtons({
-                    {id = Config.CancelButton, text = Config.CancelButtonText},
-                    {id = Config.ConfirmButton, text = Config.ConfirmButtonText},
-                    {id = Config.StopPointSmaller .. "." .. Config.StopPointBigger, text = Config.StopPointRadiusText},
+                    { id = Config.CancelButton,                                      text = Config.CancelButtonText, },
+                    { id = Config.ConfirmButton,                                     text = Config.ConfirmButtonText, },
+                    { id = Config.StopPointSmaller .. "." .. Config.StopPointBigger, text = Config.StopPointRadiusText, },
                 })
 
                 -- Listen for keypresses
@@ -72,7 +72,7 @@ local function setStoppingPoint()
                     isInPlacementMode = false
 
                     -- Set this traffic light to green on setting/updating the stopping point
-                    TriggerServerEvent('wp-trafficlights:UpdateTrafficLight', ObjToNet(trafficLightObject), Config.LightSetting.Green, coords, stopPointRadius)
+                    TriggerServerEvent("wp-trafficlights:UpdateTrafficLight", ObjToNet(trafficLightObject), Config.LightSetting.Green, coords, stopPointRadius)
                 end
 
                 -- Increase radius of stopping zone
@@ -94,39 +94,39 @@ local function setStoppingPoint()
             end
         end)
     else
-        Notify('You need to place a traffic light first', 'error', 5000)
+        Notify("You need to place a traffic light first", "error", 5000)
     end
-
 end
 
 -- Updates the traffic light mode and sends a call to sync other clients
----@param selectedLightSetting number The light setting to change to
+--- @param selectedLightSetting number The light setting to change to
 local function setTrafficLightMode(selectedLightSetting)
     if not trafficLightObject then
-        Notify('Lost connection to traffic light', 'error', 5000)
+        Notify("Lost connection to traffic light", "error", 5000)
         return
     end
 
     local trafficLightNetId = ObjToNet(trafficLightObject)
+    if not trafficLights[trafficLightNetId] then
+        Notify("You need to set the stopping point first", "error", 5000)
+        return
+    end
+
     local speedZoneCoords = trafficLights[trafficLightNetId].speedZoneCoords
     local radius = trafficLights[trafficLightNetId].radius
 
-    if not speedZoneCoords then
-        Notify('You need to set the stopping point first', 'error', 5000)
+    -- Switch to yellow first before switching to red light
+    if selectedLightSetting == Config.LightSetting.Red then
+        TriggerServerEvent("wp-trafficlights:UpdateTrafficLight", ObjToNet(trafficLightObject), Config.LightSetting.Yellow, speedZoneCoords, radius)
+        Wait(2000)
+        TriggerServerEvent("wp-trafficlights:UpdateTrafficLight", ObjToNet(trafficLightObject), Config.LightSetting.Red, speedZoneCoords, radius)
     else
-        -- Switch to yellow first before switching to red light
-        if selectedLightSetting == Config.LightSetting.Red then
-            TriggerServerEvent('wp-trafficlights:UpdateTrafficLight', ObjToNet(trafficLightObject), Config.LightSetting.Yellow, speedZoneCoords, radius)
-            Wait(2000)
-            TriggerServerEvent('wp-trafficlights:UpdateTrafficLight', ObjToNet(trafficLightObject), Config.LightSetting.Red, speedZoneCoords, radius)
-        else
-            TriggerServerEvent('wp-trafficlights:UpdateTrafficLight', ObjToNet(trafficLightObject), selectedLightSetting, speedZoneCoords, radius)
-        end
+        TriggerServerEvent("wp-trafficlights:UpdateTrafficLight", ObjToNet(trafficLightObject), selectedLightSetting, speedZoneCoords, radius)
     end
 end
 
 -- Flash yellow lights on and off for this specific light
----@param entityNetId number The entityId of the traffic light
+--- @param entityNetId number The entityId of the traffic light
 local function setYellowFlashingLights(entityNetId)
     CreateThread(function()
         local trafficLightEntity = NetToObj(entityNetId)
@@ -148,45 +148,45 @@ local function setYellowFlashingLights(entityNetId)
 end
 
 -- Delete the prop, remove the stopping zone, and clean up the variables
----@param data table The data passed in from the target script
+--- @param data table The data passed in from the target script
 local function removeTrafficLight(data)
     -- Call GreenLightSetting to get traffic moving again
-    TriggerServerEvent('wp-trafficlights:UpdateTrafficLight', ObjToNet(trafficLightObject), Config.LightSetting.Green, nil, nil)
+    TriggerServerEvent("wp-trafficlights:UpdateTrafficLight", ObjToNet(trafficLightObject), Config.LightSetting.Green, nil, nil)
 
     -- Reset variables
     trafficLightObject = nil
 
     -- Utilizing wp-placeables to pickup and delete object
-    TriggerEvent('wp-placeables:client:pickUpItem', data)
+    TriggerEvent("wp-placeables:client:pickUpItem", data)
 end
 
 -- Toggles the stopping point and traffic light markers for the currently selected traffic light
 local function toggleViewMarkers()
-    local color = {r = 255, g = 0, b = 0, a = 255}
-    
+    local color = { r = 255, g = 0, b = 0, a = 255, }
+
     if not trafficLightObject then
-        Notify('Not connected to a traffic light', 'error', 5000)
+        Notify("Not connected to a traffic light", "error", 5000)
         return
     end
-    
+
     local trafficLightNetId = ObjToNet(trafficLightObject)
     if not trafficLights[trafficLightNetId] then
-        Notify('Stopping point not set for traffic light', 'error', 5000)
+        Notify("Stopping point not set for traffic light", "error", 5000)
         return
     end
-    
+
     isShowingMarkers = not isShowingMarkers
 
     local speedZoneCoords = trafficLights[trafficLightNetId].speedZoneCoords
     local radius = trafficLights[trafficLightNetId].radius
     local trafficLightCoords = GetEntityCoords(trafficLightObject)
-    
+
     if isShowingMarkers then
         CreateThread(function()
             while isShowingMarkers and DoesEntityExist(trafficLightObject) do
                 DrawMarker(25, speedZoneCoords.x, speedZoneCoords.y, speedZoneCoords.z + 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, radius, radius, 1.0, color.r, color.g, color.b, color.a, false, false, 2, nil, nil, false)
                 DrawMarker(25, trafficLightCoords.x, trafficLightCoords.y, trafficLightCoords.z + 0.1, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.5, 0.5, 1.0, color.r, color.g, color.b, color.a, false, false, 2, nil, nil, false)
-            
+
                 Wait(1)
             end
         end)
@@ -196,64 +196,64 @@ end
 ---------------------------
 -- Menu
 ---------------------------
-local menuLocation = 'topright'
+local menuLocation = "topright"
 
-local menu = MenuV:CreateMenu(false, "Traffic Control Device", menuLocation, 154, 189, 191, 'size-125', 'none', 'menuv', 'mainmenu')
+local menu = MenuV:CreateMenu(false, "Traffic Control Device", menuLocation, 154, 189, 191, "size-125", "none", "menuv", "mainmenu")
 
 -- Add the main menu screen buttons
 menu:AddButton({
-    icon = '🛑',
+    icon = "🛑",
     label = "Set Stopping Point",
     value = nil,
     description = "The point where traffic should stop at",
-    select = setStoppingPoint
+    select = setStoppingPoint,
 })
 
 menu:AddButton({
-    icon = '🔴',
+    icon = "🔴",
     label = "Set Red Light",
     value = Config.LightSetting.Red,
     description = "Toggle to a red light",
-    select = function(data) 
+    select = function(data)
         setTrafficLightMode(data.Value)
-    end
+    end,
 })
 
 menu:AddButton({
-    icon = '🟡',
+    icon = "🟡",
     label = "Set Flashing Yellow Lights",
     value = Config.LightSetting.YellowFlashing,
     description = "Toggle to flashing yellow lights",
-    select = function(data) 
+    select = function(data)
         setTrafficLightMode(data.Value)
-    end
+    end,
 })
 
 menu:AddButton({
-    icon = '🟢',
+    icon = "🟢",
     label = "Set Green Light",
     value = Config.LightSetting.Green,
     description = "Toggle to a green light",
-    select = function(data) 
+    select = function(data)
         setTrafficLightMode(data.Value)
-    end
+    end,
 })
 
 menu:AddButton({
-    icon = '🏁',
+    icon = "🏁",
     label = "Race Start",
     value = Config.LightSetting.RaceLight,
     description = "Toggle to a green light",
-    select = function(data) 
+    select = function(data)
         setTrafficLightMode(data.Value)
-    end
+    end,
 })
 
 menu:AddButton({
-    icon = '⚙️',
+    icon = "⚙️",
     label = "Toggle markers",
     description = "View stopping point for current traffic light",
-    select = toggleViewMarkers
+    select = toggleViewMarkers,
 })
 
 ---------------------------
@@ -261,7 +261,7 @@ menu:AddButton({
 ---------------------------
 
 -- Opens menu from using target or if you've already used it you can use the command to open the menu for the last selected traffic light
-RegisterNetEvent('wp-trafficlights:client:OpenMenu', function(data)
+RegisterNetEvent("wp-trafficlights:client:OpenMenu", function(data)
     -- Opening via command make sure already has a traffic light object
     local isOpeningViaCommand = not data and trafficLightObject
 
@@ -273,22 +273,22 @@ RegisterNetEvent('wp-trafficlights:client:OpenMenu', function(data)
 
     if isOpeningViaCommand or isOpeningViaTarget then
         MenuV:OpenMenu(menu)
-    else 
-        Notify('You need to connect to a traffic light first', 'error', 5000)
+    else
+        Notify("You need to connect to a traffic light first", "error", 5000)
     end
 end)
 
 -- Updates the given traffic light to a different light setting
----@param entityNetId number The network id of the traffic light entity
----@param lightSetting number The light setting to change to
----@param speedZoneCoords table The coords of the speed zone / stopping point
----@param radius number The radius of the speed zone / stopping point
-RegisterNetEvent('wp-trafficlights:client:UpdateTrafficLightSetting')
-AddEventHandler('wp-trafficlights:client:UpdateTrafficLightSetting', function(entityNetId, lightSetting, speedZoneCoords, radius)
+--- @param entityNetId number The network id of the traffic light entity
+--- @param lightSetting number The light setting to change to
+--- @param speedZoneCoords table The coords of the speed zone / stopping point
+--- @param radius number The radius of the speed zone / stopping point
+RegisterNetEvent("wp-trafficlights:client:UpdateTrafficLightSetting")
+AddEventHandler("wp-trafficlights:client:UpdateTrafficLightSetting", function(entityNetId, lightSetting, speedZoneCoords, radius)
     local trafficLightEntity = NetToObj(entityNetId)
 
     -- Create an entry if it does not yet exist
-    if not trafficLights[entityNetId] then 
+    if not trafficLights[entityNetId] then
         trafficLights[entityNetId] = {}
     end
 
@@ -299,26 +299,26 @@ AddEventHandler('wp-trafficlights:client:UpdateTrafficLightSetting', function(en
 
     -- Remove the speed zone (if it exists) and allow cars to move again
     if trafficLights[entityNetId].roadNodeSpeedZone then
-        RemoveRoadNodeSpeedZone(trafficLights[entityNetId].roadNodeSpeedZone) 
+        RemoveRoadNodeSpeedZone(trafficLights[entityNetId].roadNodeSpeedZone)
     end
 
     -- Light == Green, allow cars to move again
     if lightSetting == Config.LightSetting.Green then
-		SetEntityTrafficlightOverride(trafficLightEntity, lightSetting)
-    -- Light == Red, stop cars at the stopping point by creating a road node speed zone with speed 0.
-	elseif lightSetting == Config.LightSetting.Red then
-		trafficLights[entityNetId].roadNodeSpeedZone = AddRoadNodeSpeedZone(speedZoneCoords, radius, 0.0, false)
-		SetEntityTrafficlightOverride(trafficLightEntity, lightSetting)
-    -- Light == Solid Yellow, allow cars to move
-	elseif lightSetting == Config.LightSetting.Yellow then
-		SetEntityTrafficlightOverride(trafficLightEntity, lightSetting)
-    -- Light == Flashing Yellow, creates a road node speed zone with a slow speed, allowing cars to move slowly through
-	elseif lightSetting == Config.LightSetting.YellowFlashing then
+        SetEntityTrafficlightOverride(trafficLightEntity, lightSetting)
+        -- Light == Red, stop cars at the stopping point by creating a road node speed zone with speed 0.
+    elseif lightSetting == Config.LightSetting.Red then
+        trafficLights[entityNetId].roadNodeSpeedZone = AddRoadNodeSpeedZone(speedZoneCoords, radius, 0.0, false)
+        SetEntityTrafficlightOverride(trafficLightEntity, lightSetting)
+        -- Light == Solid Yellow, allow cars to move
+    elseif lightSetting == Config.LightSetting.Yellow then
+        SetEntityTrafficlightOverride(trafficLightEntity, lightSetting)
+        -- Light == Flashing Yellow, creates a road node speed zone with a slow speed, allowing cars to move slowly through
+    elseif lightSetting == Config.LightSetting.YellowFlashing then
         -- Lower the speed limit in this zone
         trafficLights[entityNetId].roadNodeSpeedZone = AddRoadNodeSpeedZone(speedZoneCoords, radius, Config.FlashingYellowSpeedLimit, false)
 
         setYellowFlashingLights(entityNetId)
-    -- Light == Race start sequence. Lights will flash Red, Yellow, Yellow, Yellow, Green
+        -- Light == Race start sequence. Lights will flash Red, Yellow, Yellow, Yellow, Green
     elseif lightSetting == Config.LightSetting.RaceLight then
         SetEntityTrafficlightOverride(trafficLightEntity, Config.LightSetting.Red)
         Wait(1000)
@@ -337,14 +337,14 @@ AddEventHandler('wp-trafficlights:client:UpdateTrafficLightSetting', function(en
         SetEntityTrafficlightOverride(trafficLightEntity, Config.LightSetting.Off)
         Wait(1000)
         SetEntityTrafficlightOverride(trafficLightEntity, Config.LightSetting.Green)
-	end
+    end
 end)
 
 -- When the player removes a traffic light, this is used to cleanup the state of the traffic light
-RegisterNetEvent('wp-trafficlights:RemoveTrafficLight', function(data)
+RegisterNetEvent("wp-trafficlights:RemoveTrafficLight", function(data)
     removeTrafficLight(data)
 end)
 
 CreateThread(function()
-    TriggerEvent('chat:addSuggestion', '/trafficlight', 'Use the menu for the traffic light last interacted with')
+    TriggerEvent("chat:addSuggestion", "/trafficlight", "Use the menu for the traffic light last interacted with")
 end)
