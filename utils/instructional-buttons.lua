@@ -25,7 +25,7 @@ function DrawInstructionalButtons(buttons)
 
     PushScaleformMovieFunction(scaleform, "CLEAR_ALL")
     PopScaleformMovieFunctionVoid()
-    
+
     PushScaleformMovieFunction(scaleform, "SET_CLEAR_SPACE")
     PushScaleformMovieFunctionParameterInt(200)
     PopScaleformMovieFunctionVoid()
@@ -37,15 +37,15 @@ function DrawInstructionalButtons(buttons)
 
         -- Renders the button(s) based on its id
         if string.match(button.id, "%.") then
-			for i in string.gmatch(button.id, "[^.]+") do
-				Button(GetControlInstructionalButton(2, tonumber(i), true))
-			end
-		else
-			Button(GetControlInstructionalButton(2, button.id, true))
-		end
+            for i in string.gmatch(button.id, "[^.]+") do
+                Button(GetControlInstructionalButton(2, tonumber(i), true))
+            end
+        else
+            Button(GetControlInstructionalButton(2, button.id, true))
+        end
 
         -- Renders the message next to the button
-        ButtonMessage(button.text) 
+        ButtonMessage(button.text)
         PopScaleformMovieFunctionVoid()
         position = position + 1
     end

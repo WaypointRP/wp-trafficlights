@@ -41,9 +41,27 @@ Using the traffic lights is quite simple.
     - Be sure to start it after `wp-placeables`
 3. Update the config variables `Framework` and `Notify` to match your server setup.
 4. Add the traffic light item to your items.lua file
+    <details>
+    <summary>QB Inventory</summary>
+    
     ```lua
     trafficlight = {name = "trafficlight", label = "Traffic Light", weight = 1000, type = "item", image = "trafficlight.png", unique = false, useable = true, shouldClose = true, combinable = nil, description = "A deployable traffic control device"},
     ```
+    </details>
+
+    <details>
+    <summary>OX Inventory</summary>
+
+    ```lua
+    ["trafficlight"] = {
+        label = "Traffic Light",
+        weight = 1000,
+        stack = true,
+        close = true,
+        description = "A deployable traffic control device"
+    },
+    ```
+    </details>
 5. Add the image `trafficlight.png` to your inventory script
 6. Add a way for players to acquire the trafficlight item (ex: shop, crafting, etc.)
 7. In `wp-placeables/shared/config.lua``, search for `-- Uncomment this line if you are using wp-trafficlights` and uncomment the following lines:
@@ -73,7 +91,7 @@ Resource monitor results:
 
 - [Waypoint Placeables](https://github.com/WaypointRP/wp-placeables)
    - This is used for placing/picking up the traffic lights items. If wish to use a different method or do not want an item based system, you can modify to suit your needs or use the original xnTrafficLights.
-- QBCore / ESX / OX for Notifications 
+- QBCore / Qbox / ESX / OX for Notifications 
 - menuv
 
 ## Credit
