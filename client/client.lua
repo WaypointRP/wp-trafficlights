@@ -107,20 +107,21 @@ local function setTrafficLightMode(selectedLightSetting)
     end
 
     local trafficLightNetId = ObjToNet(trafficLightObject)
+    if not trafficLights[trafficLightNetId] then
+        Notify("You need to set the stopping point first", "error", 5000)
+        return
+    end
+
     local speedZoneCoords = trafficLights[trafficLightNetId].speedZoneCoords
     local radius = trafficLights[trafficLightNetId].radius
 
-    if not speedZoneCoords then
-        Notify("You need to set the stopping point first", "error", 5000)
+    -- Switch to yellow first before switching to red light
+    if selectedLightSetting == Config.LightSetting.Red then
+        TriggerServerEvent("wp-trafficlights:UpdateTrafficLight", ObjToNet(trafficLightObject), Config.LightSetting.Yellow, speedZoneCoords, radius)
+        Wait(2000)
+        TriggerServerEvent("wp-trafficlights:UpdateTrafficLight", ObjToNet(trafficLightObject), Config.LightSetting.Red, speedZoneCoords, radius)
     else
-        -- Switch to yellow first before switching to red light
-        if selectedLightSetting == Config.LightSetting.Red then
-            TriggerServerEvent("wp-trafficlights:UpdateTrafficLight", ObjToNet(trafficLightObject), Config.LightSetting.Yellow, speedZoneCoords, radius)
-            Wait(2000)
-            TriggerServerEvent("wp-trafficlights:UpdateTrafficLight", ObjToNet(trafficLightObject), Config.LightSetting.Red, speedZoneCoords, radius)
-        else
-            TriggerServerEvent("wp-trafficlights:UpdateTrafficLight", ObjToNet(trafficLightObject), selectedLightSetting, speedZoneCoords, radius)
-        end
+        TriggerServerEvent("wp-trafficlights:UpdateTrafficLight", ObjToNet(trafficLightObject), selectedLightSetting, speedZoneCoords, radius)
     end
 end
 
