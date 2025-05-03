@@ -3,7 +3,7 @@ game "gta5"
 
 description "Waypoint Traffic Lights"
 author "Original author: Smallo - xnTrafficLights, Modified by: BackSH00TER - Waypoint Scripts"
-version "1.0.1"
+version "1.0.2"
 
 shared_script {
     -- '@ox_lib/init.lua', -- Uncomment this if you are planning to use any ox scripts
