@@ -8,3 +8,12 @@ end)
 RegisterCommand("trafficlight", function(source, args)
 	TriggerClientEvent("wp-trafficlights:client:OpenMenu", source)
 end, false)
+
+AddEventHandler("onResourceStart", function(resourceName)
+    if resourceName == GetCurrentResourceName() then
+        -- Give the script some time to start
+        Wait(100)
+
+        ValidateOxLibUsage()
+    end
+end)
