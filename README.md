@@ -92,7 +92,7 @@ Resource monitor results:
 - [Waypoint Placeables](https://github.com/WaypointRP/wp-placeables)
    - This is used for placing/picking up the traffic lights items. If wish to use a different method or do not want an item based system, you can modify to suit your needs or use the original xnTrafficLights.
 - QBCore / Qbox / ESX / OX for Notifications 
-- menuv
+- [menuv](https://github.com/ThymonA/menuv)
 
 ## Credit
 
